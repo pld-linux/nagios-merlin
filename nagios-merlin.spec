@@ -1,7 +1,7 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.3
+Release:	0.11
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
@@ -19,7 +19,9 @@ Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/nagios
-%define		_appdir	%{_libdir}/nagios/merlin
+%define		appdir		%{_libdir}/nagios/merlin
+%define		logdir		/var/log/nagios
+%define		sockdir		/var/lib/nagios
 
 %description
 The Merlin project, or Module for Effortless Redundancy and
@@ -37,6 +39,13 @@ status data, acting as a backend, for the Ninja GUI.
 %setup -q -n merlin-%{version}
 %patch0 -p1
 
+%{__sed} -i -e '
+	s#@@DESTDIR@@/logs/neb.log#%{logdir}/merlin-neb.log#g
+	s#@@DESTDIR@@/logs/daemon.log#%{logdir}/merlind.log#g
+	s#@@DESTDIR@@/ipc.sock#%{sockdir}/ipc.sock#g
+	s#/var/run/merlin.pid#/var/run/merlind.pid#
+' example.conf
+
 %build
 %{__make} \
 	V=1 \
@@ -46,31 +55,39 @@ status data, acting as a backend, for the Ninja GUI.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sbindir},%{_sysconfdir}}
 # script uses bash specificts (pushd, popd)
 bash install-merlin.sh \
 	--root=$RPM_BUILD_ROOT \
-	--dest-dir=%{_appdir} \
+	--dest-dir=%{appdir} \
 	--libexecdir=%{_libdir} \
 	--batch \
 	--install=files
 
-chmod a+rx $RPM_BUILD_ROOT%{_appdir}/merlin.so
-rm -f $RPM_BUILD_ROOT%{_appdir}/init.sh
-rm -f $RPM_BUILD_ROOT%{_appdir}/install-merlin.sh
-rm -f $RPM_BUILD_ROOT%{_appdir}/example.conf
+chmod a+rx $RPM_BUILD_ROOT%{appdir}/merlin.so
+rm -f $RPM_BUILD_ROOT%{appdir}/init.sh
+rm -f $RPM_BUILD_ROOT%{appdir}/install-merlin.sh
+rm -f $RPM_BUILD_ROOT%{appdir}/example.conf
 
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
-sed -i -e 's,/usr/lib/nagios/merlin,%{_appdir},' $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
+sed -i -e 's,/usr/lib/nagios/merlin,%{appdir},' $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
 
-install -d $RPM_BUILD_ROOT%{_sbindir}
-mv $RPM_BUILD_ROOT{%{_appdir},%{_sbindir}}/merlind
+mv $RPM_BUILD_ROOT{%{appdir},%{_sbindir}}/merlind
 
-install -d $RPM_BUILD_ROOT%{_sysconfdir}
-mv $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir}}/merlin.conf
+mv $RPM_BUILD_ROOT{%{appdir},%{_sysconfdir}}/merlin.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/chkconfig --add merlind
+%service merlind restart
+
+%preun
+if [ "$1" = "0" ]; then
+	%service -q merlind stop
+	/sbin/chkconfig --del merlind
+fi
 
 %files
 %defattr(644,root,root,755)
@@ -79,10 +96,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/merlin.conf
 %attr(754,root,root) /etc/rc.d/init.d/merlind
 %attr(755,root,root) %{_sbindir}/merlind
-%dir %{_appdir}
-%{_appdir}/db.sql
-%{_appdir}/object_importer.inc.php
-%attr(755,root,root) %{_appdir}/import
-%attr(755,root,root) %{_appdir}/import.php
-%attr(755,root,root) %{_appdir}/merlin.so
-%attr(755,root,root) %{_appdir}/showlog
+%dir %{appdir}
+%{appdir}/db.sql
+%{appdir}/object_importer.inc.php
+%attr(755,root,root) %{appdir}/import
+%attr(755,root,root) %{appdir}/import.php
+%attr(755,root,root) %{appdir}/merlin.so
+%attr(755,root,root) %{appdir}/showlog
