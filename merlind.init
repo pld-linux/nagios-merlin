@@ -31,6 +31,7 @@ fi
 # Get service config - may override defaults
 [ -f /etc/sysconfig/merlind ] && . /etc/sysconfig/merlind
 
+daemon=/usr/sbin/merlind
 pidfile="/var/run/merlind.pid"
 config_file=/etc/nagios/merlin.conf
 
@@ -42,7 +43,7 @@ start() {
 	fi
 
 	msg_starting "Merlin Daemon"
-	daemon /usr/sbin/merlind -c "$config_file"
+	daemon $daemon -c "$config_file"
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/merlind
 }
@@ -55,7 +56,7 @@ stop() {
 
 	# Stop daemons.
 	msg_stopping "Merlin Daemon"; busy
-	/usr/sbin/merlind -c "$config_file" -k && ok || fail
+	$daemon -c "$config_file" -k && ok || fail
 	rm -f /var/lock/subsys/merlind
 }
 

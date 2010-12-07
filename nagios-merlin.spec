@@ -1,7 +1,7 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
@@ -62,6 +62,9 @@ rm -f $RPM_BUILD_ROOT%{_appdir}/example.conf
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
 
+install -d $RPM_BUILD_ROOT%{_sbindir}
+mv $RPM_BUILD_ROOT{%{_appdir},%{_sbindir}}/merlind
+
 install -d $RPM_BUILD_ROOT%{_sysconfdir}
 mv $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir}}/merlin.conf
 
@@ -74,10 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc example.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/merlin.conf
 %attr(754,root,root) /etc/rc.d/init.d/merlind
+%attr(755,root,root) %{_sbindir}/merlind
 %{_appdir}/db.sql
 %{_appdir}/object_importer.inc.php
 %attr(755,root,root) %{_appdir}/import
 %attr(755,root,root) %{_appdir}/import.php
 %attr(755,root,root) %{_appdir}/merlin.so
-%attr(755,root,root) %{_appdir}/merlind
 %attr(755,root,root) %{_appdir}/showlog
