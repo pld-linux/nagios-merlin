@@ -1,0 +1,5 @@
+To init database:
+
+mysqladmin create merlin
+mysql merlin < /usr/lib*/nagios/merlin/db.sql
+mysql -e "GRANT ALL ON merlin.* TO merlin@localhost IDENTIFIED BY 'merlin'"

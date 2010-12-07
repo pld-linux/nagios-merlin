@@ -1,7 +1,7 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.11
+Release:	0.13
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
@@ -14,6 +14,7 @@ BuildRequires:	libdbi-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sed >= 4.0.9
 Requires(post,preun):	/sbin/chkconfig
+Requires:	libdbi-drivers-mysql
 Requires:	nagios >= 3.2.4
 Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -45,6 +46,8 @@ status data, acting as a backend, for the Ninja GUI.
 	s#@@DESTDIR@@/ipc.sock#%{sockdir}/ipc.sock#g
 	s#/var/run/merlin.pid#/var/run/merlind.pid#
 ' example.conf
+
+cp -a %{SOURCE2} README.PLD
 
 %build
 %{__make} \
@@ -91,7 +94,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc COPYING HOWTO README SPECS TECHNICAL
+%doc COPYING HOWTO README SPECS TECHNICAL README.PLD
 %doc example.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/merlin.conf
 %attr(754,root,root) /etc/rc.d/init.d/merlind
