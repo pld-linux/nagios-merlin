@@ -1,0 +1,31 @@
+--- merlin-0.9.0/Makefile~	2010-11-01 16:27:11.000000000 +0200
++++ merlin-0.9.0/Makefile	2010-12-07 15:10:45.564915223 +0200
+@@ -51,22 +51,22 @@
+ 	$(QUIET_LINK)$(CC) $^ -o $@ $(LDFLAGS)
+ 
+ mtest: mtest.o sql.o $(TEST_OBJS) $(TEST_DEPS) $(MODULE_OBJS)
+-	$(QUIET_LINK)$(CC) $^ -o $@ $(MTEST_LDFLAGS)
++	$(QUIET_LINK)$(CC) $^ -o $@ $(MTEST_LDFLAGS) $(LDFLAGS)
+ 
+ test-lparse: test-lparse.o lparse.o logutils.o hash.o test_utils.o
+-	$(QUIET_LINK)$(CC) $^ -o $@
++	$(QUIET_LINK)$(CC) $^ -o $@ $(LDFLAGS)
+ 
+ import: $(IMPORT_OBJS)
+-	$(QUIET_LINK)$(CC) $^ -o $@ -ldbi
++	$(QUIET_LINK)$(CC) $^ -o $@ -ldbi $(LDFLAGS)
+ 
+ showlog: $(SHOWLOG_OBJS)
+-	$(QUIET_LINK)$(CC) $^ -o $@
++	$(QUIET_LINK)$(CC) $^ -o $@ $(LDLFAGS)
+ 
+ nebtest: $(NEBTEST_OBJS)
+-	$(QUIET_LINK)$(CC) $^ -o $@ -ldl -rdynamic -Wl,-export-dynamic
++	$(QUIET_LINK)$(CC) $^ -o $@ -ldl -rdynamic -Wl,-export-dynamic $(LDFLAGS)
+ 
+ $(PROG): $(DAEMON_OBJS)
+-	$(QUIET_LINK)$(CC) $(LDFLAGS) $(DAEMON_LDFLAGS) $(LIBS) $^ -o $@
++	$(QUIET_LINK)$(CC) $(LIBS) $(DAEMON_LDFLAGS) $(LDFLAGS) $^ -o $@
+ 
+ $(NEB): $(MODULE_OBJS)
+ 	$(QUIET_LINK)$(CC) $(MOD_LDFLAGS) $(LDFLAGS) $^ -o $@
