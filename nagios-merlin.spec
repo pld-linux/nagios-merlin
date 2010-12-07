@@ -1,7 +1,7 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.2
+Release:	0.3
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
@@ -13,8 +13,8 @@ BuildRequires:	bash
 BuildRequires:	libdbi-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sed >= 4.0.9
-Requires:	nagios >= 3.2.4
 Requires(post,preun):	/sbin/chkconfig
+Requires:	nagios >= 3.2.4
 Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -61,6 +61,7 @@ rm -f $RPM_BUILD_ROOT%{_appdir}/example.conf
 
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
+sed -i -e 's,/usr/lib/nagios/merlin,%{_appdir},' $RPM_BUILD_ROOT/etc/rc.d/init.d/merlind
 
 install -d $RPM_BUILD_ROOT%{_sbindir}
 mv $RPM_BUILD_ROOT{%{_appdir},%{_sbindir}}/merlind

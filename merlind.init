@@ -34,12 +34,30 @@ fi
 daemon=/usr/sbin/merlind
 pidfile="/var/run/merlind.pid"
 config_file=/etc/nagios/merlin.conf
+nagios_cfg=/etc/nagios/nagios.cfg
+broker_module=/usr/lib/nagios/merlin/merlin.so
 
 # configtest itself
 # must return non-zero if check failed
 # output is discarded if checkconfig is ran without details
 configtest() {
 	local val ret=0
+
+	# check Nagios setup
+	val=$(awk -F= '/^broker_module=.*merlin.so/{print $2}' $nagios_cfg)
+	val=${val% *}
+	if [ -z "$val" ]; then
+		echo >&2 "'broker_module' does not contain merlin.so in $nagios_cfg"
+		echo >&2 "Add to Nagios config:"
+		echo >&2 "broker_module=$broker_module $config_file"
+		ret=1
+	fi
+
+	# check that it exists
+	if [ -n "$val" -a ! -f "$val" ]; then
+		echo >&2 "broker_module $val does not exist, try setting it to $broker_module"
+		ret=1
+	fi
 
 	return $ret
 }
