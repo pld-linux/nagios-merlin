@@ -79,6 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/merlin.conf
 %attr(754,root,root) /etc/rc.d/init.d/merlind
 %attr(755,root,root) %{_sbindir}/merlind
+%dir %{_appdir}
 %{_appdir}/db.sql
 %{_appdir}/object_importer.inc.php
 %attr(755,root,root) %{_appdir}/import
