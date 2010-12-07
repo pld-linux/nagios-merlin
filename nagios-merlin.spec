@@ -41,7 +41,7 @@ status data, acting as a backend, for the Ninja GUI.
 %{__make} \
 	V=1 \
 	CC="%{__cc}" \
-	CFLAGS='%{rpmcflags} -pipe $(WARN_FLAGS) -fPIC -fno-strict-aliasing -rdynamic' \
+	CFLAGS='%{rpmcflags} -pipe -Wall -Wno-unused-parameter -fPIC -fno-strict-aliasing -rdynamic' \
 	LDFLAGS="%{rpmldflags}"
 
 %install
