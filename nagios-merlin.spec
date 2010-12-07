@@ -1,13 +1,15 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.13
+Release:	0.15
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
 # Source0-md5:	dd3fda7b4eea661e65b60f9b6a7d079e
 Source1:	merlind.init
+Source2:	README.PLD
 Patch0:		ldflags-as-needed.patch
+Patch1:		install.patch
 URL:		http://www.op5.org/community/plugin-inventory/op5-projects/merlin
 BuildRequires:	bash
 BuildRequires:	libdbi-devel
@@ -39,6 +41,7 @@ status data, acting as a backend, for the Ninja GUI.
 %prep
 %setup -q -n merlin-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %{__sed} -i -e '
 	s#@@DESTDIR@@/logs/neb.log#%{logdir}/merlin-neb.log#g
@@ -63,9 +66,10 @@ install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sbindir},%{_sysconfdir}}
 bash install-merlin.sh \
 	--root=$RPM_BUILD_ROOT \
 	--dest-dir=%{appdir} \
-	--libexecdir=%{_libdir} \
+	--libexecdir=%{appdir}/lib \
+	--bindir=%{_sbindir} \
 	--batch \
-	--install=files
+	--install=files,apps
 
 chmod a+rx $RPM_BUILD_ROOT%{appdir}/merlin.so
 rm -f $RPM_BUILD_ROOT%{appdir}/init.sh
@@ -106,3 +110,19 @@ fi
 %attr(755,root,root) %{appdir}/import.php
 %attr(755,root,root) %{appdir}/merlin.so
 %attr(755,root,root) %{appdir}/showlog
+
+# apps
+%attr(755,root,root) %{_sbindir}/mon
+%dir %{appdir}/lib
+%attr(755,root,root) %{appdir}/lib/-oconf
+%attr(755,root,root) %{appdir}/lib/log.push.sh
+%attr(755,root,root) %{appdir}/lib/node.py
+%attr(755,root,root) %{appdir}/lib/oconf.py
+%attr(755,root,root) %{appdir}/lib/restart.sh
+%attr(755,root,root) %{appdir}/lib/sshkey.fetch.sh
+%attr(755,root,root) %{appdir}/lib/sshkey.push.sh
+%attr(755,root,root) %{appdir}/lib/start.sh
+%attr(755,root,root) %{appdir}/lib/stop.sh
+%{appdir}/lib/modules/compound_config.py
+%{appdir}/lib/modules/merlin_apps_utils.py
+%{appdir}/lib/modules/merlin_conf.py

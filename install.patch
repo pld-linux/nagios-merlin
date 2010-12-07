@@ -1,0 +1,11 @@
+--- merlin-0.9.0/install-merlin.sh~	2010-11-01 16:27:11.000000000 +0200
++++ merlin-0.9.0/install-merlin.sh	2010-12-07 17:14:52.926983287 +0200
+@@ -147,7 +147,7 @@
+ {
+ 	mkdir -p $root_path/$bindir
+ 	mkdir -p $root_path/$libexecdir
+-	cp apps/mon.py $root_path/usr/bin/mon
++	cp apps/mon.py $root_path/$bindir/mon
+ 	cp -a apps/libexec/* $root_path/$libexecdir
+ 	cp oconf $root_path/$libexecdir/-oconf
+ 	chmod 755 $root_path/$bindir/mon
