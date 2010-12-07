@@ -1,7 +1,7 @@
 Summary:	Merlin: Module for Effortless Redundancy and Loadbalancing In Nagios
 Name:		nagios-merlin
 Version:	0.9.0
-Release:	0.15
+Release:	0.20
 License:	GPL v2
 Group:		Networking
 Source0:	http://www.op5.org/op5media/op5.org/downloads/merlin-%{version}.tar.gz
@@ -43,12 +43,33 @@ status data, acting as a backend, for the Ninja GUI.
 %patch0 -p1
 %patch1 -p1
 
+find -type f | xargs \
 %{__sed} -i -e '
 	s#@@DESTDIR@@/logs/neb.log#%{logdir}/merlin-neb.log#g
 	s#@@DESTDIR@@/logs/daemon.log#%{logdir}/merlind.log#g
 	s#@@DESTDIR@@/ipc.sock#%{sockdir}/ipc.sock#g
 	s#/var/run/merlin.pid#/var/run/merlind.pid#
-' example.conf
+
+	# fix paths in "apps"
+	# we cant just replace whole path, as the targets differ
+	# sort -r the block when done adding
+	s#/opt/monitor/var/status.log#/var/lib/nagios/status.dat#
+	s#/opt/monitor/var/rw/#/var/lib/nagios/rw/#
+	s#/opt/monitor/var/objects.cache#/var/lib/nagios/objects.cache#
+	s#/opt/monitor/var/nagios.log#%{logdir}/nagios.log#
+	s#/opt/monitor/var/conf_sync.log#%{logdir}/conf_sync.log#
+	s#/opt/monitor/var/archives#%{logdir}/archives#
+	s#/opt/monitor/pushed_logs#/var/log/merlin/pushed_logs#
+	s#/opt/monitor/op5/merlin/merlin.conf#%{_sysconfdir}/merlin.conf#
+	s#/opt/monitor/op5/merlin/logs/#/var/log/merlin/#
+	s#/opt/monitor/op5/merlin#%{appdir}#
+	s#/opt/monitor/etc/nagios.cfg#%{_sysconfdir}/nagios.cfg#g
+	s#/opt/monitor/etc/#%{_sysconfdir}/#g
+	s#/opt/monitor/bin/nagios#%{_sbindir}/nagios#g
+	s#/etc/op5/distributed/state/#/var/lib/nagios/merlin/state/#
+	s#/etc/init.d/#/etc/rc.d/init.d/#
+	s#/usr/libexec/merlin#%{appdir}/lib#
+'
 
 cp -a %{SOURCE2} README.PLD
 
