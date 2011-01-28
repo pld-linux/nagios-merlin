@@ -13,6 +13,7 @@ Patch1:		install.patch
 URL:		http://www.op5.org/community/plugin-inventory/op5-projects/merlin
 BuildRequires:	bash
 BuildRequires:	libdbi-devel
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sed >= 4.0.9
 Requires(post,preun):	/sbin/chkconfig
