@@ -7,8 +7,6 @@
 # description: Merlin is an event-distribution system for Nagios
 #
 # processname:	merlind
-# config:
-# pidfile:
 #
 # $Id$
 
